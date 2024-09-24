@@ -24,7 +24,7 @@ This tool was written in Swift and can be compiled using the Swift compiler from
 
 ```
 git clone https://github.com/jamesellinger/screencap_to_clipboardOCR.git
-cd screen_to_clipboardOCR
+cd screencap_to_clipboardOCR
 swiftc screencap_to_clipboardOCR.swift -o screencap_to_clipboardOCR
 ```
 
