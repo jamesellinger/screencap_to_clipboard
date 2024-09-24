@@ -30,6 +30,6 @@ swiftc screencap_to_clipboardOCR.swift -o screencap_to_clipboardOCR
 
 Then either run the tool by typing `./screencap_to_clipboard` or double click the binary in a Finder window (this will open a terminal window).
 
-A camera icon will appear in the status bar at the top of the screen. To take a capture and OCR press `control + command + m`. Output will be displayed in the terminal, and you will be able to paste the text from the clipboard into other apps (for Japanese study I recommend that you chain this with something like Clipboard Inserter).
+A camera icon will appear in the status bar at the top of the screen. To take a capture and OCR press `control + command + m` and drag the crosshairs over the area you wish to capture (repeat these steps each time you want to capture and OCR). Output will be displayed in the terminal, and you will be able to paste the text from the clipboard into other apps (for Japanese study I recommend that you chain this with something like Clipboard Inserter). 
 
 You can close the tool either by closing the terminal window or clicking on the camera icon then choosing "Quit".
