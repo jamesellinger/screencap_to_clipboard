@@ -63,7 +63,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
-    @objc func captureScreenshot() {
+@objc func captureScreenshot() {
         let task = Process()
         task.launchPath = "/usr/sbin/screencapture"
         task.arguments = ["-i", "-c", "-x"]
@@ -71,28 +71,35 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         task.launch()
         task.waitUntilExit()
 
-        if let imageData = NSPasteboard.general.data(forType: .tiff),
-           let image = NSImage(data: imageData) {
-            print("Screenshot captured. Image size: \(image.size)")
-            performOCROnCapturedImage()
-        } else {
-            print("Failed to capture screenshot")
+        processClipboardImage { result in
+            switch result {
+            case .success(let cgImage):
+                let width = cgImage.width
+                let height = cgImage.height
+                print("Screenshot captured. Image size: \(width)x\(height)")
+                self.performOCR(on: cgImage)
+            case .failure(let error):
+                print("Failed to capture screenshot: \(error)")
+            }
         }
     }
 
-    func performOCROnCapturedImage() {
-        if let imageData = NSPasteboard.general.data(forType: .tiff),
-           let image = NSImage(data: imageData),
-           let cgImage = image.cgImage(forProposedRect: nil, context: nil, hints: nil) {
-            performOCR(on: cgImage)
-        } else {
-            print("Failed to process the captured image")
+    func processClipboardImage(completion: @escaping (Result<CGImage, Error>) -> Void) {
+        guard let imageData = NSPasteboard.general.data(forType: .tiff),
+              let image = NSImage(data: imageData),
+              let cgImage = image.cgImage(forProposedRect: nil, context: nil, hints: nil) else {
+            completion(.failure(NSError(domain: "ImageProcessing", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to process image from clipboard"])))
+            return
         }
+        completion(.success(cgImage))
     }
 
     func performOCR(on cgImage: CGImage) {
         let request = VNRecognizeTextRequest { request, error in
-            guard let observations = request.results as? [VNRecognizedTextObservation] else { return }
+            guard let observations = request.results as? [VNRecognizedTextObservation] else { 
+                print("No text observations found")
+                return 
+            }
             
             let recognizedText = observations.compactMap { $0.topCandidates(1).first?.string }.joined(separator: "\n")
             
